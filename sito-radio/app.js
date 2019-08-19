@@ -82,6 +82,16 @@ const server = http.createServer(basic, (req, res) => {
       } else {
         sendJson({status : "fail"}, res);
       }
+    } else if(api === "getAudioList") {
+      const list = fs.readdirSync("recordings");
+      sendJson({audio : list}, res);
+    } else if(api.startsWith("playRecording")) {
+      const data = parse(api.substr(14, api.length));
+      if(systemSync("mpv recordings/" + data.audio) === 0) {
+        sendJson({status : "ok"}, res);
+      } else {
+        sendJson({status : "fail"}, res);
+      }
     } else {
       console.log("api \"" + api + "\" not found");
       sendJson("", res, 404);

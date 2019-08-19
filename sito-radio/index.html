@@ -14,21 +14,22 @@
   <body style="font-size: 100%;">
     <div class="container mt-5">
       <h1>Pannello di gestione</h1>
-      <div class="container mt-4">
-        <label for="volume-slider">Volume</label>
+      <div class="mt-4">
+        <label for="volume-slider"><h3>Volume</h3></label>
         <input type="range" class="custom-range" min="0" max="31" id="volume-slider">
       </div>
-      <div class="container mt-4">
+      <div class="mt-4">
         <h3>
           Radio Val di Sole
         </h3>
         <p>Status: <span id="status-radio">...</span><br></p>
         <div class="mt-4">
-          <div class="btn-group ml-3" role="group" aria-label="...">
             <button id="play-radio" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play"></span>  Play</button>
             <button id="pause-radio" type="button" class="btn btn-default"><span class="glyphicon glyphicon-stop"></span>  Pause</button>
-          </div>
         </div>
+      </div>
+      <div class="mt-4">
+        <span id="recondingsList"></span>
       </div>
     </div>
 
