@@ -3,6 +3,7 @@ const fs = require('fs');
 const ejs = require('ejs');
 const child_process = require("child_process");
 const { parse } = require('querystring');
+const auth = require('http-auth');
 
 const header = {'Content-Type': 'text/html'};
 
@@ -33,7 +34,12 @@ const sendJson = (data, destination, status = 200, headers = {'Content-Type': 't
   destination.end(JSON.stringify(data));
 }
 
-const server = http.createServer((req, res) => {
+const basic = auth.basic({
+    realm: "Carlo Ramponi.",
+    file: "users.htpasswd"
+});
+
+const server = http.createServer(basic, (req, res) => {
 
   const url = req.url;
 
