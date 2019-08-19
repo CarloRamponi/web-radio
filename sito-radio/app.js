@@ -1,11 +1,10 @@
 const http = require('http');
 const fs = require('fs');
 const ejs = require('ejs');
-const child_process = require("child_process")
+const child_process = require("child_process");
+const { parse } = require('querystring');
 
 const header = {'Content-Type': 'text/html'};
-
-const indexTemplate = fs.readFileSync("index.ejs").toString();
 
 function systemSync(cmd){
   try {
@@ -14,6 +13,14 @@ function systemSync(cmd){
     return error.status;
   }
   return 0;
+}
+
+function systemStdout(cmd) {
+  return child_process.execSync(cmd);
+}
+
+function getCurrentVolume() {
+  return parseInt(systemStdout("amixer sget 'Line Out' | grep 'Front Left: Playback' | cut -b 24-25"));
 }
 
 const send = (source, destination, status = 200, headers = header) => {
@@ -26,22 +33,28 @@ const sendJson = (data, destination, status = 200, headers = {'Content-Type': 't
   destination.end(JSON.stringify(data));
 }
 
-const render = (source, param, destination, status = 200, headers = header) => {
-  destination.writeHead(status, headers);
-  const output = ejs.render(source, param);
-  destination.end(output);
-}
-
 const server = http.createServer((req, res) => {
 
   const url = req.url;
 
   if (url === '/') {
-    const radioStatus = systemSync("systemctl is-active --quiet radio") === 0 ? "Playing" : "Stopped";
-    return render(indexTemplate, {radio: {status : radioStatus}}, res);
-  } else if (url === "/script.js") {
-    return send('script.js', res, 200, {'Content-Type' : 'text/javascript'});
+    return send("index.html", res);
+  } else if (url.endsWith(".html")) {
+    var file = url.substr(1, url.length);
+    if(fs.existsSync(file)) {
+      return send(file, res);
+    } else {
+      send('404.html', res, 404, {});
+    }
+  } else if(url.endsWith(".js") && url !== "/app.js") {
+    var file = url.substr(1, url.length);
+    if(fs.existsSync(file)) {
+      return send(file, res, 200, {'Content-Type' : 'text/javascript'});
+    } else {
+      send('404.html', res, 404, {});
+    }
   } else if (url.startsWith("/api/")) {
+
     const api = url.substr(5, url.length);
     console.log("requested api: " + api);
     if(api === "playRadio") {
@@ -50,6 +63,19 @@ const server = http.createServer((req, res) => {
     } else if(api === "pauseRadio") {
       const ret = systemSync("systemctl stop radio") === 0 ? "ok" : "fail";
       sendJson({status : ret}, res);
+    } else if(api === "getRadioStatus") {
+      const radioStatus = systemSync("systemctl is-active --quiet radio") === 0 ? "Playing" : "Stopped";
+      sendJson({status : radioStatus}, res);
+    } else if(api === "getVolume") {
+      const volume = getCurrentVolume();
+      sendJson({volume : volume}, res);
+    } else if(api.startsWith("setVolume")) {
+      const data = parse(api.substr(10, api.length));
+      if(systemSync("amixer sset 'Line Out' " + data.volume) === 0) {
+        sendJson({status : "ok"}, res);
+      } else {
+        sendJson({status : "fail"}, res);
+      }
     } else {
       console.log("api \"" + api + "\" not found");
       sendJson("", res, 404);
