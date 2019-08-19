@@ -14,23 +14,33 @@
   <body style="font-size: 100%;">
     <div class="container mt-5">
       <h1>Pannello di gestione</h1>
-      <div class="mt-4">
-        <label for="volume-slider"><h3>Volume</h3></label>
-        <input type="range" class="custom-range" min="0" max="31" id="volume-slider">
+      <div style="margin-top:60px">
+        <hr>
+        <label for="volume-slider"><h3>Volume: <span id="volume-label">15</span></h3></label>
+        <input style="display: inline" type="range" class="custom-range" min="0" max="31" id="volume-slider">
+        <h4 class="mt-2">Premesso che i volumi del mixer siano settati rispettivamente a: <span style="color: green">8.5</span> e <span style="color: green">8.5</span>:</h4>
+        <ul class="list-group list-group-flush mt-4">
+         <li class="list-group-item"><h4>Volume consigliato per radio: <span style="color: green">18</span></h4></li>
+         <li class="list-group-item"><h4>Volume consigliato per annunci: <span style="color: green">31</span> (max)</h4></li>
+       </ul>
       </div>
-      <div class="mt-4">
-        <h3>
+      <div style="margin-top:60px">
+        <hr>
+        <h2>
           Radio Val di Sole
-        </h3>
+        </h2>
         <p>Status: <span id="status-radio">...</span><br></p>
-        <div class="mt-4">
+        <div>
             <button id="play-radio" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play"></span>  Play</button>
             <button id="pause-radio" type="button" class="btn btn-default"><span class="glyphicon glyphicon-stop"></span>  Pause</button>
         </div>
       </div>
-      <div class="mt-4">
+      <div style="margin-top:40px">
+        <hr>
+        <h2>Annunci:</h2>
         <span id="recondingsList"></span>
       </div>
+      <hr>
     </div>
 
     <!-- Optional JavaScript -->

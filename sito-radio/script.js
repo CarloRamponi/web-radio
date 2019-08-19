@@ -12,6 +12,7 @@ const updateVolume = () => {
   url: "/api/getVolume",
   success: function( result ) {
     $("#volume-slider").val(result.volume);
+    $("#volume-label").text(result.volume);
   }});
 }
 
@@ -49,9 +50,11 @@ function updateRecondingsPanel(recordings) {
 }
 
 $("#volume-slider").change(() => {
+  var val = $("#volume-slider").val();
+  $("#volume-label").text(val);
   $.ajax({
   url: "/api/setVolume",
-  data: { volume : $("#volume-slider").val() },
+  data: { volume : val },
   success: function( result ) {
     if(result.status === "ok") {
       updateVolume();
