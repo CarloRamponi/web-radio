@@ -98,7 +98,7 @@ const server = http.createServer(basic, (req, res) => {
       sendJson({audio : list}, res);
     } else if(api === "playRecording") {
       const data = parse(parsedUrl.query);
-      if(systemSync("mpv recordings/" + data.audio) === 0) {
+      if(systemSync("mpv recordings/\"" + data.audio + "\"") === 0) {
         sendJson({status : "ok"}, res);
       } else {
         sendJson({status : "fail"}, res);
